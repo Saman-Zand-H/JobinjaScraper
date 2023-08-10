@@ -1,13 +1,19 @@
-# Define your item pipelines here
-#
-# Don't forget to add your pipeline to the ITEM_PIPELINES setting
-# See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-
-
-# useful for handling different item types with a single interface
+import json
+from collections import Counter
 from itemadapter import ItemAdapter
 
 
 class JobinjaPipeline:
+    def open_spider(self, spider):
+        self.data = []
+        
     def process_item(self, item, spider):
-        return item
+        name = item.get("name")
+        if name is not None:
+            self.data.append(name)
+            
+    def close_spider(self, spider):
+        if len(self.data):
+            name_count = Counter(self.data)
+            with open("technologies.json", "w") as f:
+                json.dump(dict(name_count), f, indent=4, ensure_ascii=False)
