@@ -24,5 +24,6 @@ class JobinjaPipeline:
                 for name, count in name_count.items()
             ],
             update_conflicts=True,
-            update_fields=["count", "name"]
+            unique_fields=["name"],
+            update_fields=["count"]
         )
