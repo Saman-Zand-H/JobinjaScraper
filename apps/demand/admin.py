@@ -1,3 +1,11 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import DemandTechnology
+
+
+@admin.register(DemandTechnology)
+class DemandTechnologyAdmin(admin.ModelAdmin):
+    list_display = ["name", "count"]
+    ordering = ["-count"]
+    search_fields = ["name"]
+    

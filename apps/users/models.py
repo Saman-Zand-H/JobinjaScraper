@@ -4,7 +4,7 @@ from django.contrib.auth.models import (AbstractBaseUser,
                                         UserManager)
 
 
-class UserModel(AbstractBaseUser):
+class UserModel(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=50, 
                                 unique=True,
                                 db_index=True)

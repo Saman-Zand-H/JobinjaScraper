@@ -1,0 +1,47 @@
+services:
+  backend:
+    build:
+      context: .
+    entrypoint: [ "sh", "entrypoint.sh" ]
+    volumes:
+      - .:/usr/src/app
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+  db:
+    image: postgres:13.0-alpine
+    environment:
+      - "POSTGRES_USER=postgres"
+      - "POSTGRES_DB=postgres"
+      - "POSTGRES_PASSWORD=postgres"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/data/postgresql/data
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+  celery:
+    build: .
+    restart: always
+    command: celery -A conf worker -l INFO
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - redis
+  celery_beat:
+    build: .
+    restart: always
+    command: celery -A conf beat -l INFO
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - redis
+
+volumes:
+  postgres_data:

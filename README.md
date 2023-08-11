@@ -22,14 +22,8 @@ The purpose of this project (right now) is for analyzing what technologies have 
 
 ## Running The Project
 
-To initialize the project, run this command first:
+This Project makes use of Celery and Celery Beat, to crawl and scrape Jobinja every 6 hours (configurable). Run the project with this command:
 
 ```bash
-    python manage.py migrate
-```
-
-And then to crawl and scrape the data to populate the database run this command:
-
-```bash
-    python manage.py crawl
+    docker-compose up --build
 ```

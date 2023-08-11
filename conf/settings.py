@@ -1,4 +1,5 @@
 import sys, os
+from celery.beat import crontab
 from pathlib import Path
 from environs import Env
 
@@ -11,7 +12,6 @@ sys.path.append(os.path.join(BASE_DIR, "apps"))
 
 
 # Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 SECRET_KEY = env.str("SECRET_KEY", "django-insecure-%bt(f*82)#8&_umgz=7)u=dssx@ke8!c*d#l$7)q=-bx9@+kj(")
 
@@ -50,7 +50,9 @@ ROOT_URLCONF = 'conf.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR / "templates",
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -67,18 +69,20 @@ WSGI_APPLICATION = 'conf.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env.str("DB_NAME", "postgres"),
+        'USER': env.str("DB_USER", "postgres"),
+        'PASSWORD': env.str("DB_PASSWORD", "postgres"),
+        'HOST': env.str("DB_HOST", "db"),
+        'PORT': 5432,
     }
 }
 
 
 # Password validation
-# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -100,7 +104,6 @@ AUTH_USER_MODEL = "users.UserModel"
 
 
 # Internationalization
-# https://docs.djangoproject.com/en/3.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
@@ -114,11 +117,31 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = "staticfiles"
+STATICFILES_DIRS = [
+    BASE_DIR / "static"
+]
+
+
+# Email Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
+
 
 # Default primary key field type
-# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Celery Configuration
+CELERY_BROKER_URL = "redis://redis:6379"
+CELERY_RESULT_BACKEND = "redis://redis:6379"
+
+CELERY_BEAT_SCHEDULE = {
+    'crawl_jobinja_demands': {
+        "task": "demand.tasks.crawl_jobinja_demands",
+        # we refresh our data every 6 hours
+        "schedule": crontab(hour="*/6")
+    }
+}
