@@ -18,7 +18,11 @@ class JobinjaPipeline:
     
     def perform_bulk_create(self):
         name_count = Counter(self.items)
-        DemandTechnology.objects.bulk_create([
-            DemandTechnology(name=name, count=count)
-            for name, count in name_count.items()
-        ])
+        data = DemandTechnology.objects.bulk_create(
+            [
+                DemandTechnology(name=name, count=count)
+                for name, count in name_count.items()
+            ],
+            update_conflicts=True,
+            update_fields=["count"]
+        )
