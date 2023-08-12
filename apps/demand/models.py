@@ -12,3 +12,9 @@ class DemandTechnology(models.Model):
     
     class Meta:
         verbose_name_plural = "Demand Technologies"
+        
+    def save(self, *args, **kwargs):
+        # to avoid having typos for names, like back-end instead of backend
+        self.name.replace("-", "").strip().lower()
+        if self.name.isascii():
+            super().save(*args, **kwargs)

@@ -1,0 +1,50 @@
+{% extends '_base.html' %}
+
+{% block title %}Homepage{% endblock %}
+
+{% block content %}
+<section class="flex justify-around items-center w-full h-full gap-5">
+        <div>
+            <canvas id="tech_pie_chart"></canvas>
+        </div>
+        <div class="h-screen overflow-y-scroll p-4">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for d in data %}
+                        <tr>
+                            <td>{{ d.name }}</td>
+                            <td>{{ d.count }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+</section>
+<script>
+const labels = `{{ chart_data.keys|join:','|safe }}`.split(",")
+const values = `{{ chart_data.values|join:','|safe }}`.split(",")
+const chartElem = document.getElementById("tech_pie_chart")
+const chart = new Chart(chartElem, {
+    type: 'pie',
+    data: {
+        datasets: [{
+            data: values
+        }],
+        labels: labels,
+    },
+    options: {
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
+    }
+})
+</script>
+{% endblock %}
