@@ -17,4 +17,4 @@ class DemandTechnology(models.Model):
         # to avoid having typos for names, like back-end instead of backend
         self.name.replace("-", "").strip().lower()
         if self.name.isascii():
-            super().save(*args, **kwargs)
+            return super().save(*args, **kwargs)

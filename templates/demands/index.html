@@ -2,22 +2,33 @@
 
 {% block title %}Homepage{% endblock %}
 
+{% block style %}
+<style>
+    th, td {
+        border: .2rem dashed black;
+        padding: .5rem
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<section class="flex justify-around items-center w-full h-full gap-5">
-        <div>
+<section class="grid grid-cols-1 sm:grid-cols-2 w-full h-full gap-5">
+        <div class="w-full my-auto self-center">
             <canvas id="tech_pie_chart"></canvas>
         </div>
-        <div class="h-screen overflow-y-scroll p-4">
+        <div class="h-screen overflow-y-auto p-4 w-full">
             <table>
                 <thead>
                     <tr>
+                        <th>Row</th>
                         <th>Name</th>
                         <th>Count</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for d in data %}
-                        <tr>
+                        <tr class="text-center font-sans">
+                            <td>{{ forloop.counter }}</td>
                             <td>{{ d.name }}</td>
                             <td>{{ d.count }}</td>
                         </tr>
@@ -27,11 +38,11 @@
         </div>
 </section>
 <script>
-const labels = `{{ chart_data.keys|join:','|safe }}`.split(",")
-const values = `{{ chart_data.values|join:','|safe }}`.split(",")
+const labels = `{{ chart_data.keys|join:','|safe|default:'' }}`.split(",")
+const values = `{{ chart_data.values|join:','|safe|default:'' }}`.split(",")
 const chartElem = document.getElementById("tech_pie_chart")
 const chart = new Chart(chartElem, {
-    type: 'pie',
+    type: 'doughnut',
     data: {
         datasets: [{
             data: values

@@ -6,7 +6,7 @@ class JobinjaspiderSpider(scrapy.Spider):
     name = "jobinjaspider"
     allowed_domains = ["jobinja.ir"]
     # this is a custom attr that let's us choose number of paginated pages we want to scrape
-    number_of_pages = 100
+    number_of_pages = 200
     start_urls = ["https://jobinja.ir/jobs/category/it-software-web-development-jobs/%D8%A7%D8%B3%D8%AA%D8%AE%D8%AF%D8%A7%D9%85-%D9%88%D8%A8-%D8%A8%D8%B1%D9%86%D8%A7%D9%85%D9%87-%D9%86%D9%88%DB%8C%D8%B3-%D9%86%D8%B1%D9%85-%D8%A7%D9%81%D8%B2%D8%A7%D8%B1?preferred_before=1691671654&sort_by=relevance_desc"]
 
     def parse(self, response):
@@ -34,4 +34,4 @@ class JobinjaspiderSpider(scrapy.Spider):
         TECH_TAGS_XPATH = '//*[contains(@class, "c-infoBox") and contains(@class, "u-mB0")]//li[contains(@class, "c-infoBox__item")][1]/div[contains(@class, "tags")]/span/text()'
         techs = response.xpath(TECH_TAGS_XPATH).getall()
         for tech in techs:
-            yield {"name": tech.strip().title()}
+            yield {"name": tech.strip().title()} if tech.isascii() else {}

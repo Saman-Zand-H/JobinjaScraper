@@ -30,7 +30,7 @@ class HomeView(View):
             i["name"]: i["count"] for i in tech_data.iterator()
         } | {"others": others_count}
         
-        avg_count = DemandTechnology.objects.aggregate(a=Avg("count"))["a"]
+        avg_count = DemandTechnology.objects.aggregate(a=Avg("count"))["a"] or 0
         
         context = {
             "chart_data": chart_data,
