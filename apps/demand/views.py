@@ -28,7 +28,7 @@ class HomeView(View):
             
         chart_data = {
             i["name"]: i["count"] for i in tech_data.iterator()
-        } | {"others": others_count}
+        } | {"others": others_count} if others_count > 0 else {}
         
         avg_count = DemandTechnology.objects.aggregate(a=Avg("count"))["a"] or 0
         
